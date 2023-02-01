@@ -1,0 +1,349 @@
+<!doctype html><html>
+<head>
+    <meta charset="UTF-8">
+    <title>Bomb Sweeper-经典扫雷</title>
+        <style>
+            html {
+                font-size: 10px;
+            }
+            body {
+                counter-reset: total cleared bombs flagged;
+                font-size: 1.6rem;
+                font-family: sans-serif;
+            }
+            H1 {
+                font-size:2rem;
+                margin:1rem auto;
+                width:fit-content
+           }
+           #game {
+               overflow:hidden;
+               position:relative;
+               margin:0 auto;
+               background:lightgrey;
+               width:fit-content;
+               height:fit-content;
+               padding:1rem;
+               border:0.3rem outset lightgrey;
+               border-radius:1rem;
+           }
+           .square {
+               position: relative;
+               float: left;
+               display: block;
+               width: 2rem;
+               height: 2rem;
+               border: 1px grey solid;
+               background-color: lightgrey;
+               text-align: center;
+           }
+           .square > label,
+           .square > .flag {
+               position: absolute;
+               left: -0.1rem;
+               top: -0.1rem;
+               right: -0.1rem;
+               bottom: -0.1rem;
+               border: 0.2rem outset grey;
+               background-color: darkgrey;
+           }
+           #flag-mode {
+               display:none;
+           }
+           [for="flag-mode"],
+           [for="show-bombs"] {
+               display:block;
+               margin:0 auto;
+               width:fit-content;
+               background:lightgrey;
+               padding:0 0.5rem;
+               border:2px outset grey;
+               border-radius:0.5rem;
+               margin:0.2rem auto;
+           }
+           #flag-mode:not(:checked) + [for="flag-mode"]:after {
+               content:" OFF ";
+               font-weight:bold;
+           }
+           #flag-mode:checked + [for="flag-mode"]:after {
+               content:" ON ";
+               font-weight:bold;
+           }
+           .open-square,.flag-square {
+               position: absolute;
+               left: -1000rem;
+           }
+           .open-square:not(.bomb) {
+               counter-increment:total;
+           }
+           .open-square.bomb {
+               counter-increment:bombs;
+           }
+           .open-square:checked + .square > label {
+               display: none;
+           }
+           :not(.bomb)[data-count] + .square:before {
+               line-height:2rem;
+               font-weight:bold;
+           }
+           :not(.bomb)[data-count="1"] + .square:before {
+               content:"1";
+               color: blue;
+           }
+           :not(.bomb)[data-count="2"] + .square:before {
+               content:"2";
+               color: green;
+           }
+           :not(.bomb)[data-count="3"] + .square:before {
+               content:"3";
+               color: red;
+           }
+           :not(.bomb)[data-count="4"] + .square:before {
+               content:"4";
+               color: darkblue;
+           }
+           :not(.bomb)[data-count="5"] + .square:before {
+               content:"5";
+               color: brown;
+           }
+           :not(.bomb)[data-count="6"] + .square:before {
+               content:"6";
+               color: cyan;
+           }
+           :not(.bomb)[data-count="7"] + .square:before {
+               content:"7";
+               color: black;
+           }
+           :not(.bomb)[data-count="8"] + .square:before {
+               content:8;
+               color: grey;
+           }
+           .bomb + .square {
+               background-color: red
+           }
+           .bomb + .square:before {
+               content: "💣";
+               line-height: 2rem;
+               font-size: 1.2rem;
+           }
+           .flag {
+               display:none;
+           }
+           .flag-square:checked ~ .flag {
+               display:block;
+               counter-increment:flagged;
+           } 
+           .flag-square:checked ~ .flag-label:before,
+           .flag-square:checked ~ .flag:before {
+               content:"🚩"
+           }
+           #flag-mode:not(:checked) ~ .square > .flag-label {
+               display:none;
+           }
+           #flag-mode:checked ~ .show-square:not(:checked) + .square > .flag-label {
+               display:block;
+           }
+           .open-square:not(.bomb):checked {
+               counter-increment: total cleared;
+           }
+           .bombs {
+               width:50%;
+               text-align:center;
+           }
+           .score {
+               clear:both;
+               float:right;
+               text-align:right;
+               width:50%;
+               text-align:center;
+           }
+           .bombs:after {
+               content: counter(bombs) "🚩" counter(flagged);
+               line-height:3rem;
+               border:0.2rem inset lightgrey;
+               padding:0.2rem 0.5rem;
+               background-color:white;
+               border-radius:0.5rem;
+           }
+           .score:after {
+               content: counter(cleared) " of " counter(total);
+               line-height:3rem;
+               border:0.2rem inset lightgrey;
+               padding:0.2rem 0.5rem;
+               background-color:white;
+               border-radius:0.5rem;
+           }
+           .message {
+               clear: left;
+               color: limegreen;
+               text-align:center;
+               font-weight:bold;
+           }
+           .message:before {
+               content: "(: GOOD JOB! 漂亮！你赢了！ :) "
+           }
+          .pane {
+              display:block;
+              position:absolute;
+              left:0;
+              right:0;
+              top:0;
+              bottom:0;
+          }
+          .open-square:not(.grouped):not(.bomb):not(:checked) ~ .message:before,
+          .group-master:not(:checked) ~ .message:before {
+              content: none;
+          }
+          .open-square:not(.grouped):not(.bomb):not(:checked) ~ .pane,
+          .group-master:not(:checked) ~ .pane,
+          .lost-game{
+              display: none;
+          }
+          .open-square.bomb:checked ~ .message {
+              color: red;
+          }
+          .open-square.bomb:checked ~ .pane {
+              position:relative;
+              display:block;
+          }
+          .open-square.bomb:checked ~ .message:before {
+              content: " ): You Lose 你失败了… :(" !important;
+          }
+          .open-square.bomb:checked ~ .lost-game {
+              position:relative;
+              display:block;
+              z-index:2
+          }
+          #show-bombs:checked ~ .bomb + .square > label {
+              display:none;
+          }
+          #show-bombs:checked ~ .open-square:not(.bomb) + .square > .flag:after {
+              content: "❌";
+              position:absolute;
+              top:-0.4rem;
+              left:-0.1rem;
+         }
+     </style>
+</head>
+<body>
+<div id="game">
+    <h1>Bomb CSSweeper</h1>
+    <input type="checkbox" id="show-bombs" hidden>
+    <input type="checkbox" id="flag-mode">
+    <label for="flag-mode">🚩mode</label>
+    <div class="pane"></div>
+    <div class="score">Cleared:
+        <br>
+    </div>
+<div class="bombs">Bombs:
+    <br>
+</div>
+<div class="message"></div>
+<div class="lost-game">
+    <label for="show-bombs">Show Bombs</label>
+</div>
+</div>
+<script>
+    var rows = Math.floor(10 + (Math.random() * 5));
+    var cols = Math.floor(10 + (Math.random() * 5));
+    var bombs = Math.floor(15 + (Math.random() * 10));
+    var i, s, l, fi, fs, fl;
+    var game = document.getElementById('game');
+    var pane = game.querySelector('.pane');
+    var grid = [];
+    var style = document.createElement('style');
+    style.innerHTML = ".square:nth-of-type(" + cols + "n+1) {clear:left;}\n";
+    game.insertBefore(style, pane);
+    for (var r = 1; r <= rows; r++) {
+        grid[r] = [];
+        for (var c = 1; c <= cols; c++) {
+            i = grid[r][c] = document.createElement('input');
+            i.type = 'checkbox';
+            i.classList.add('open-square')
+            i.id = 'open-r' + r + '-c' + c;
+            i.r = r;
+            i.c = c;
+            game.insertBefore(i, pane);
+            s = document.createElement('span');
+            s.classList.add('square');
+            game.insertBefore(s, pane);
+            l = document.createElement('label');
+            l.htmlFor = i.id;
+            l.classList.add('open-label');
+            s.appendChild(l);
+            fi = document.createElement('input');
+            fi.type = "checkbox";
+            fi.classList.add('flag-square');
+            fi.id = 'flag-r' + r + '-c' + c;
+            s.appendChild(fi);
+            fs = document.createElement('span');
+            fs.classList.add('flag');
+            s.appendChild(fs);
+            fl = document.createElement('label');
+            fl.htmlFor = fi.id;
+            fl.classList.add('flag-label');
+            s.appendChild(fl);
+        }
+    }
+    for (var b = 0; b < bombs; b++) {
+        do {
+            r = 1 + (Math.random() * rows) >> 0;
+            c = 1 + (Math.random() * cols) >> 0;
+            console.log(r, c, grid[r][c]);
+        } while (grid[r][c].classList.contains('bomb'));
+        i = grid[r][c];
+        i.classList.add('bomb');
+        var list = getSurrounding(i)
+        for (r = 0; r < list.length; r++) {
+            i = list[r];
+            var count = Number(i.getAttribute('data-count')) || 0;
+            i.setAttribute('data-count', ++count);
+            i = i.nextElementSibling;
+            i.setAttribute('data-count', count);
+        }
+    }
+    var group = 1;
+    while (i = document.querySelector('.open-square:not([data-count]):not(.grouped)')) {
+        var check = [i];
+        do {
+            i = check.pop();
+            list = getSurrounding(i)
+            for (r = 0; r < list.length; r++) {
+                i = list[r];
+                if (!i.classList.contains('group' + group)) {
+                    i.classList.add('grouped');
+                    i.classList.add('group' + group);
+                    if (!i.getAttribute('data-count')) {
+                        check.push(i);
+                        i = document.querySelector('[for="' + i.id + '"]');
+                        i.htmlFor = 'group' + group;
+                    }
+                }
+            }
+        } while (check.length);
+        i = document.createElement('input');
+        i.type = 'checkbox'
+        i.classList.add('group-master');
+        i.hidden = true;
+        i.id = 'group' + group;
+        style.innerHTML += '#group' + group + ':checked ~ .group' + group + ' + .square > label { display:none; }\n' + '#group' + group + ':checked ~ .group' + group + ' { counter-increment:cleared total }\n';
+        game.insertBefore(i, style);
+        group++;
+    }
+    function getSurrounding(i) {
+        var rs = Math.max(i.r - 1, 1);
+        var re = Math.min(i.r + 1, rows);
+        var cs = Math.max(i.c - 1, 1);
+        var ce = Math.min(i.c + 1, cols);
+        var result = [];
+        for (r = rs; r <= re; r++) {
+            for (c = cs; c <= ce; c++) {
+                result.push(grid[r][c]);
+            }
+        }
+        return result;
+    }
+</script>
+<p class="color:grey">这里是第347行代码，共350行。 \n 我认为最大的问题永远不是</p><font color=#807F19>头</font><font color=#01FE32>发</font><p>（<font color=#DB1D07>去</font><font color=#B73A0E>他</font><font color=#935715>妈</font><font color=#6F741C>的</font><font color=#4B9123>头</font><font color=#27AE2A>发</font><font color=#03CB31>!</font>）</p>
+<p class="color:grey">This is line 348 of 350. \n I think the most problem is never </p><font color=#F00C00>t</font><font color=#E11800>h</font><font color=#D22400>e</font><font color=#C33000> </font><font color=#B43C00>h</font><font color=#A54800>a</font><font color=#965400>i</font><font color=#876000>r</font><font color=#786C00> </font><font color=#697800>p</font><font color=#5A8400>r</font><font color=#4B9000>o</font><font color=#3C9C00>b</font><font color=#2DA800>l</font><font color=#1EB400>e</font><font color=#0FC000>m</font><p>(<font color=#F5000A>t</font><font color=#EB0014>h</font><font color=#E1001E>e</font><font color=#D70028> </font><font color=#CD0032>m</font><font color=#C3003C>o</font><font color=#B90046>t</font><font color=#AF0050>h</font><font color=#A5005A>e</font><font color=#9B0064>r</font><font color=#91006E> </font><font color=#870078>f</font><font color=#7D0082>u</font><font color=#73008C>c</font><font color=#690096>k</font><font color=#5F00A0>i</font><font color=#5500AA>n</font><font color=#4B00B4>g</font><font color=#4100BE> </font><font color=#3700C8>h</font><font color=#2D00D2>a</font><font color=#2300DC>i</font><font color=#1900E6>r</font><font color=#0F00F0>!</font>)</p>
+</body></html>
