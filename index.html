@@ -1,7 +1,7 @@
 <!doctype html><html>
 <head>
     <meta charset="UTF-8">
-    <title>Bomb Weeper-经典扫雷</title>
+    <title>Bomb Weeper-扫雷</title>
         <style>
             @media (prefers-color-scheme: light) {
                 body {
@@ -256,7 +256,7 @@
     <div class="score">Cleared:
         <br>
     </div>
-<div class="bombs">Bombs/炸弹数量:
+<div class="bombs">Bombs/炸弹:
     <br>
 </div>
 <div class="message"></div>
@@ -267,8 +267,8 @@
     <th>
         <label>用时/time:</label><br> 
         <input type="text" name="" id="timer" size="7" class="bombs"/><br>
-        <button onclick="pause(this)" id="pause" state="on">暂停</button>
-        <button onclick="restart()">重新开始</button>
+        <label onclick="pause(this)" id="pause" state="on">暂停stop</label>
+        <label onclick="restart()" >重新开始/restart</label>
     </th>
 </table>
     <a class="buttonreplay" href="https://xiayizhang.github.io/bomb_weeper">再来亿遍！</a><br>
@@ -417,11 +417,11 @@ function pause(self) {
     var state = self.getAttribute("state");
     if (state === "on") {
        clearInterval(n_timer);
-           self.textContent = "继续";
+           self.textContent = "继续/continue";
            self.setAttribute("state", "off");
     } else {
         n_timer = timer();
-        self.textContent = "暂停";
+        self.textContent = "暂停/stop";
         self.setAttribute("state", "on");
     }
 }
@@ -432,7 +432,7 @@ function restart() {
     n_hour = 0;
     n_timer = timer();
    var ele_pause = document.getElementById("pause");
-    ele_pause.textContent = "暂停";
+    ele_pause.textContent = "暂停/stop";
     ele_pause.setAttribute("state", "on");
 }
 </script> 
