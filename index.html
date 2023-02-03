@@ -248,6 +248,14 @@
     <label for="show-bombs">Show Bombs</label>
 </div>
 </div>
+<div>
+    <table>
+        <label>计时:</label> 
+        <input type="text" name="" id="timer"/> 
+        <button onclick="pause(this)" id="pause" state="on">暂停</button>
+        <button onclick="restart()">重新开始</button>
+    </table>
+</div>
 <a class="buttonreplay" href="https://xiayizhang.github.io/bomb_weeper">再来亿遍！/PLAY AGAIN!（如果此按钮无效，请手动刷新页面。/If this button is invalid, please refresh the page manually.）</a>
 <script>
     var rows = Math.floor(10 + (Math.random() * 5));
@@ -349,6 +357,60 @@
         }
         return result;
     }
+    var ele_timer = document.getElementById("timer");
+    var n_sec = 0; //秒
+    var n_min = 0; //分
+    var n_hour = 0; //时
+    function timer() {
+        return setInterval(function () {
+            var str_sec = n_sec;
+            var str_min = n_min;
+            var str_hour = n_hour;
+            if ( n_sec < 10) {
+               str_sec = "0" + n_sec;
+            }
+            if ( n_min < 10 ) {
+                str_min = "0" + n_min;
+            }
+            if ( n_hour < 10 ) {
+                str_hour = "0" + n_hour;
+            }
+            var time = str_hour + ":" + str_min + ":" + str_sec;
+           ele_timer.value = time;
+           n_sec++;
+           if (n_sec > 59){
+           n_sec = 0;
+           n_min++;
+       }
+       if (n_min > 59) {
+          n_sec = 0;
+          n_hour++;
+       }
+   }, 1000);
+}
+var n_timer = timer();
+function pause(self) {
+    var state = self.getAttribute("state");
+    if (state === "on") {
+       clearInterval(n_timer);
+           self.textContent = "继续";
+           self.setAttribute("state", "off");
+    } else {
+        n_timer = timer();
+        self.textContent = "暂停";
+        self.setAttribute("state", "on");
+    }
+}
+function restart() {
+    clearInterval(n_timer);
+    n_sec = 0;
+    n_min = 0;
+    n_hour = 0;
+    n_timer = timer();
+   var ele_pause = document.getElementById("pause");
+    ele_pause.textContent = "暂停";
+    ele_pause.setAttribute("state", "on");
+}
 </script> 
 <div class="text-align:center;">
     <font color=#D5002A>开</font><font color=#AB0054>发</font><font color=#81007E>者</font><font color=#5700A8>的</font><font color=#2D00D2>话</font><font color=#0300FC>：</font><br>
