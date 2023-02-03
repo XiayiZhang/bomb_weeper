@@ -243,6 +243,18 @@
               height:200px;
               color:grey;
               text-align:center;
+         }
+         .shadow {
+             width:100px;
+             font-size:12px;
+             color:white;
+             text-align:center;
+             display:block;
+             padding:10px 0 10px;
+             background:grey;
+             border-radius:5px;
+             box-shadow:1px 1px darkgrey;
+         }
      </style>
 </head>
 <body>
@@ -267,8 +279,8 @@
     <th>
         <label>用时/time:</label><br> 
         <input type="text" name="" id="timer" size="7" class="bombs"/><br>
-        <p class="border-style:outset;"><label onclick="pause(this)" id="pause" state="on" >暂停stop</label></p><br>
-        <p class="border-style:outset;"><label onclick="restart()"  >重新开始restart</label></p><br>
+        <button onclick="pause(this)" id="pause" state="on" class="shadow">暂停stop</button><br>
+        <button onclick="restart()" class="shadow">重新开始restart</button><br>
     </th>
 </table>
     <a class="buttonreplay" href="https://xiayizhang.github.io/bomb_weeper">再来亿遍！</a><br>
