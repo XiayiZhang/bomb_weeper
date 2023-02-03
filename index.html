@@ -253,7 +253,7 @@
     <input type="checkbox" id="flag-mode">
     <label for="flag-mode">🚩mode</label>
     <div class="pane"></div>
-    <div class="score">Cleared:
+    <div class="score">Cleared/清理:
         <br>
     </div>
 <div class="bombs">Bombs/炸弹:
@@ -267,8 +267,8 @@
     <th>
         <label>用时/time:</label><br> 
         <input type="text" name="" id="timer" size="7" class="bombs"/><br>
-        <label onclick="pause(this)" id="pause" state="on">暂停stop</label>
-        <label onclick="restart()" >重新开始/restart</label>
+        <label onclick="pause(this)" id="pause" state="on" for="flag-mode">暂停stop</label>
+        <label onclick="restart()"  for="flag-mode">重新开始/restart</label>
     </th>
 </table>
     <a class="buttonreplay" href="https://xiayizhang.github.io/bomb_weeper">再来亿遍！</a><br>
